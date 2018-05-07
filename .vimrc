@@ -26,11 +26,56 @@ set showmode
 set foldmethod=syntax
 set nofoldenable
 set nowrap
-set path+=/home/ym95/program/qm4d/source/**2 "set path for go to file (gf)
+set termguicolors " set true color
+set spelllang=en  " set spell checking with English
+set spell         " trigger on spell checking
+set splitbelow
+set splitright
+
+set list
+set showbreak=↪
+set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
+
+
+
 let mapleader=";"
 let maplocalleader=";"
 syntax enable
 syntax on
+
+"*********************************************
+"*              vim setting
+"*********************************************
+" Compatible with tmux setting{{{
+" easier split navigation
+if !exists('$TMUX') " make it compatible with tmux
+    nnoremap <C-J> <C-W><C-J>
+    nnoremap <C-K> <C-W><C-K>
+    nnoremap <C-L> <C-W><C-L>
+    nnoremap <C-H> <C-W><C-H>
+else
+    " reqired to enable reszie vim split windows with mouse
+    " in tmux.
+    set ttymouse=xterm2
+endif
+"}}}
+
+" vim buffer switching{{{
+set hidden
+nnoremap <Leader>bn :bnext<CR>
+nnoremap <Leader>bb :bprev<CR>
+nnoremap <Leader>bd :bdelete<CR>
+" }}}
+
+" vim clear search highlighting{{{
+nnoremap <Leader><space> :noh<cr>
+"}}}
+
+" jump between locations{{{
+" used by Syntastic to jump between errors.
+nnoremap <Leader>en :lnext<CR>
+nnoremap <Leader>eb :lprev<CR>
+" }}}
 
 
 autocmd BufReadPost *
@@ -43,41 +88,50 @@ autocmd BufReadPost *
 "*              Vundle Setting               *
 "*********************************************
 
-filetype off                  " required
+filetype off                              " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " begin of plugin list
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'morhetz/gruvbox'        " color scheme
+Plugin 'morhetz/gruvbox'                  " color scheme
 Plugin 'altercation/vim-colors-solarized' " color scheme
-Plugin 'SirVer/ultisnips'       " input code blocks
-Plugin 'Valloric/YouCompleteMe' " famous YCM
-Plugin 'Yggdroot/indentLine'    " indentLine
-Plugin 'yegappan/grep'          " grep.vim
-Plugin 'mileszs/ack.vim'        " ack.vim
-Plugin 'dyng/ctrlsf.vim'        " a search and view tool for vim
-Plugin 'scrooloose/nerdcommenter' " annotation
-Plugin 'easymotion/vim-easymotion' " speed motion in vim
-Plugin 'scrooloose/nerdtree'    "file manage system for vim
-"Plugin 'Lokaltog/vim-powerline' "vim powerline
-Plugin 'vim-airline/vim-airline' "vim-airline
-Plugin 'vim-airline/vim-airline-themes' "vim-airline-theme
-Plugin 'derekwyatt/vim-fswitch' "fast switch between *.h and *.c
-Plugin 'majutsushi/tagbar'      "list tags in a split window
-Plugin 'fholgado/minibufexpl.vim' "buffer, window manage tool
-Plugin 'brookhong/cscope.vim'   "cscope.vim
+Plugin 'SirVer/ultisnips'                 " input code blocks
+Plugin 'Valloric/YouCompleteMe'           " famous YCM
+Plugin 'Yggdroot/indentLine'              " indentLine
+Plugin 'yegappan/grep'                    " grep.vim
+Plugin 'mileszs/ack.vim'                  " ack.vim
+Plugin 'dyng/ctrlsf.vim'                  " a search and view tool for vim
+Plugin 'scrooloose/nerdcommenter'         " annotation
+Plugin 'easymotion/vim-easymotion'        " speed motion in vim
+Plugin 'scrooloose/nerdtree'              " file manage system for vim
+Plugin 'vim-airline/vim-airline'          " vim-airline
+Plugin 'vim-airline/vim-airline-themes'   " vim-airline-theme
+Plugin 'derekwyatt/vim-fswitch'           " fast switch between *.h and *.c
+Plugin 'majutsushi/tagbar'                " list tags in a split window
+Plugin 'Miocbb/cscope.vim'                " forked from brookhong/cscope.vim
+Plugin 'LaTeX-Box-Team/LaTeX-Box'         " latex plugin
+Plugin 'iamcco/mathjax-support-for-mkdp'
+Plugin 'iamcco/markdown-preview.vim'
+Plugin 'plasticboy/vim-markdown'          " needed to disabel vim conceal (can not `set conceallevel=0` due to the indentline plugin)
+Plugin 'rakr/vim-one'                     " vim colorscheme
+Plugin 'christoomey/vim-tmux-navigator'   " seamlessly navigation for both vim and tmux
+Plugin 'vim-syntastic/syntastic'          " syntastic checking plugin
+
+
+"Plugin 'lervag/vimtex'                   " latex plugin support more PDF viewers
 " end of plugin list
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+call vundle#end()                         " required
+filetype plugin indent on                 " required
 
 "*********************************************
-" Put your non-Plugin stuff after this line
+" Put your Plugin seting after this line
 "*********************************************
 
-set term=xterm-256color
+"set term=xterm-256color
+" gruvbox{{{
 colorscheme gruvbox
-"colorscheme solarized
+"}}}
 
 highlight Comment cterm=italic
 if &term =~ '256color'
@@ -91,16 +145,6 @@ endif"
 "vim-fswitch{{{
 "fast switch between *.h and *.c or *.cpp
 nmap <silent> <Leader>sw :FSHere<cr>
-"}}}
-
-
-"vim-powerline{{{
-"set colorscheme
-"let g:Powerline_colorscheme='solarized256'
-"show the full path of file in statusline
-"let g:Powerline_stl_path_style = 'full'
-"Insert the "currhigroup" segment after the filetype segment
-"call Pl#Theme#InsertSegment('currhigroup', 'after', 'fileinfo')
 "}}}
 
 
@@ -148,7 +192,7 @@ let g:UltiSnipsJumpBackwardTrigger="<leader><s-tab>"
 
 " YCM{{{
 " global conf
-let g:ycm_global_ycm_extra_conf='~/.vim/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf='~/.vim/ycm_global_extra_conf.py'
 " complete is enabled in comments
 let g:ycm_complete_in_comments=1
 " allow vim load .ycm_extra_conf.py
@@ -166,33 +210,46 @@ let g:ycm_min_num_of_chars_for_completion=1
 let g:ycm_cache_omnifunc=0
 " syntax complete
 let g:ycm_seed_identifiers_with_syntax=1
-nnoremap <leader>jc :YcmCompleter GoToDeclaration<CR>
-nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
+" disable syntastic checking to be
+" competitive with Syntastic
+let g:ycm_show_diagnostics_ui = 0
 "}}}
+
+" Syntastic checking{{{
+" enable Syntastic checking will active a bug in Cscope.vim,
+" that is, calling CscopeFind will make a error if the fould
+" file is not opened in vim buffer. Once hit <enter>, CscopeFind
+" will continue to work as expected. Although Cscope.vim still
+" can function, this little bug is annoying every time.
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_c_remove_include_errors = 1
+let g:syntastic_enable_balloons = 1
+let g:syntastic_loc_list_height = 5
+
+" set gcc checker
+let g:syntastic_c_checkers = ['gcc']
+let g:syntastic_c_compiler_options = "-std=gnu99 -c -Wall"
+let g:syntastic_c_config_file = "/home/yuncai/Documents/Server/qm4d.config"
+" set flake8 checker
+let g:syntastic_python_checkers = ['flake8']
+" }}}
 
 
 "indentline{{{
 "highlight the indentline color 
 let g:indentLine_setColors = 0
-set list
-set showbreak=↪
-set listchars=tab:→\ ,eol:↲,nbsp:␣,trail:•,extends:⟩,precedes:⟨
 "}}}
 
 
 "CtrlSF{{{
 nnoremap <Leader>sp :CtrlSF<CR>
-"}}}
-
-"ctags{{{
-set tags=/home/ym95/program/qm4d/source/.tags/tags
-"open the definition in new tab
-map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-"<ctrl+ w><vd>: open vertical definition (vd)
-map <c-w>vt :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-"<ctrl+ w><hd>: open horizontal definition (hd)
-map <c-w>ht :sp <CR>:exec("tag ".expand("<cword>"))<CR>
-"Ctrl + T: Jump back from the definition.
 "}}}
 
 
@@ -261,34 +318,25 @@ let g:tagbar_type_cpp = {
 "}}}
 
 
-"minibufexpl{{{
-"show/hide MiniBufExplorer window, (list window)(lw)
-map <Leader>lb :MBEToggle<cr>
-" tab to switch buffer and window
-"forward tab window
-map <Leader>bn :MBEbn<cr> 
-"backward tab window
-map <Leader>bb :MBEbp<cr> 
-"delete current buffer
-map <Leader>bd :MBEbd<cr>
-"eneable cycle tab
-let g:miniBufExplCycleArround = 1
-let g:miniBufExplorerAutoStart = 0
-"}}}
-
-
 "cscope.vim{{{
+"bug: if it is the first time to use cscope.vim function in a project,
+"     the vim window will be black after refresh buffer. Once the database
+"     is created, it works well.
+" can not jump to declaration.
 nnoremap <leader>fa :call CscopeFindInteractive(expand('<cword>'))<CR>
 nnoremap <leader>l :call ToggleLocationList()<CR>
-
 " g: global: find global definition(s) of the token under cursor
-nnoremap  <leader>fg :call CscopeFind('g', expand('<cword>'))<CR>
+nnoremap  <leader>fg :call CscopeFind('g', expand('<cword>'))<CR> :<CR>
+nnoremap  <leader>fvg :vsp <CR>:call CscopeFind('g', expand('<cword>'))<CR> :<CR>
+nnoremap  <leader>fhg :sp  <CR>:call CscopeFind('g', expand('<cword>'))<CR> :<CR>
 " d: called: find functions that function under cursor calls
 nnoremap  <leader>fd :call CscopeFind('d', expand('<cword>'))<CR>
 " c: calls:  find functions calling this function
 nnoremap  <leader>fc :call CscopeFind('c', expand('<cword>'))<CR>
 " f: file: find file under cursor
 nnoremap  <leader>ff :call CscopeFind('f', expand('<cword>'))<CR>
+nnoremap  <leader>fvf :vsp <CR>:call CscopeFind('f', expand('<cword>'))<CR>
+nnoremap  <leader>fhf :sp <CR>:call CscopeFind('f', expand('<cword>'))<CR>
 
 " t: text: find all instances of the text under cursor
 nnoremap  <leader>ft :call CscopeFind('t', expand('<cword>'))<CR>
@@ -298,7 +346,34 @@ nnoremap  <leader>fe :call CscopeFind('e', expand('<cword>'))<CR>
 nnoremap  <leader>fi :call CscopeFind('i', expand('<cword>'))<CR>
 " s: symbol: find all reference to the token under cursor
 nnoremap  <leader>fs :call CscopeFind('s', expand('<cword>'))<CR>
+"let g:cscope_open_location = 0
+let g:cscope_silent = 1
 "}}}
 
+
+"Latex-box{{{
+let g:tex_flavor='latex'
+"let g:LatexBox_viewer="SumatraPDF"
+" use the default indent. LaTeX-Box uses two tabs, too wide.
+let g:LatexBox_custom_indent=0
+" use pdfLaTeX
+let g:LatexBox_latexmk_options =
+          \ '-pdflatex="pdflatex -synctex=1 %O %S"'
+" Inverse search
+"let g:LatexBox_viewer = 'SumatraPDF -reuse-instance -inverse-search '
+"          \ . '"gvim --servername ' . v:servername
+"          \ . ' --remote-send \"^<C-\^>^<C-n^>'
+"          \ . ':drop \%f^<CR^>:\%l^<CR^>:normal\! zzzv^<CR^>'
+"          \ . ':call remote_foreground('''.v:servername.''')^<CR^>\""'
+" Folding
+let g:LatexBox_Folding=1
+let g:LatexBox_fold_automatic=0 " use \lf to calculate folding
+" \ls to forward search, see ftplugins/tex.vim
+let g:tex_conceal = "" "disable vim tex_conceal feature
+"}}}
+
+"{{{vim-markdown
+let g:vim_markdown_conceal=0
+"}}}
 
 autocmd BufWritePost $MYVIMRC source $MYVIMRC " make changes effective instantly
